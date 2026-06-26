@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 # исходная функция, которую нужно аппроксимировать моделью a(x)
 def func(x):
@@ -7,7 +8,7 @@ def func(x):
 
 # модель
 def model(w, x):
-    xv = np.array([x ** n for n in range(len(w))])
+    xv = np.array([x ** n for n in range(len(w))])  # w_0 + w_1*x + w_2*x^2 + w_3*x^3 + w_4*x^4
     return w.T @ xv
 
 
@@ -51,5 +52,14 @@ for _ in range(n_iter):
 
 Q = np.average(loss(w, coord_x, coord_y))
 
+w_str = [f"{val:+.2f}" for val in w]
+formula = rf'$y = {w_str[0][1:]} {w_str[1]}x {w_str[2]}x^2 {w_str[3]}x^3 {w_str[4]}x^4$'
+
+plt.plot(coord_x, coord_y)
+plt.plot(coord_x, model(w, coord_x))
+plt.legend([r'$y = -0.5x^2 + 0.1x^3 + \cos(3x) + 7$', formula])
+
 print(w)
 print(Q)
+
+plt.show()
