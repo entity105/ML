@@ -1,4 +1,6 @@
 import numpy as np
+import graphs as g
+from matplotlib import pyplot as plt
 
 # исходная функция, которую нужно аппроксимировать моделью a(x)
 def func(x):
@@ -28,10 +30,24 @@ eta = np.array([0.1, 0.01, 0.001, 0.0001]) # шаг обучения для ка
 w = np.array([0., 0., 0., 0.]) # начальные значения параметров модели
 N = 200 # число итераций градиентного алгоритма
 
+
+# График
+# Визуализация
+features = ['1', 'x', 'x^2', 'x^3']
+write_func = r'$y = 0.1x^2 - sin(x) + 5$'
+ax, model_line, text = g.approximation(coord_x, coord_y, write_func,
+                            features, w, Q=0)
+
+
 for i in range(N):
     w = w - eta * dQ(w, coord_x, coord_y)
+
+    g.approximation_update(ax, coord_x, w, model, model_line, features,
+                           text, i, Q=0, pause=0.1)
 
 Q = Q(model(w, coord_x), coord_y)
 
 print(w)
 print(Q)
+
+plt.show()

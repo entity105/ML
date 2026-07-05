@@ -1,4 +1,6 @@
 import numpy as np
+import graphs as g
+from matplotlib import pyplot as plt
 
 # исходная функция, которую нужно аппроксимировать моделью a(x)
 def func(x):
@@ -28,6 +30,12 @@ lm = 0.02 # значение параметра лямбда для вычисл
 Qe = np.average(L(w, coord_x, coord_y)) # начальное значение среднего эмпирического риска
 np.random.seed(0) # генерация одинаковых последовательностей псевдослучайных чисел
 
+# Визуализация
+features = ['1', 'x', 'x^2', 'cos(2x)', 'sin(2x)']
+write_func = r'$y = \frac{1}{2}x^2 - \frac{1}{10e^{-x}} + \frac{1}{2}cos(2x) - 2$'
+ax, model_line, text = g.approximation(coord_x, coord_y, write_func,
+                            features, w, Qe)
+
 for i in range(N):
     k = np.random.randint(0, sz)  # sz - размер выборки (массива coord_x)
     x_i = coord_x[k]
@@ -36,4 +44,13 @@ for i in range(N):
     epsilon_i = L(w, x_i, y_i)
     Qe = lm * epsilon_i + (1 - lm)*Qe
 
+    # Для визуализации
+    g.approximation_update(ax, coord_x, w, model, model_line, features, text, i, Qe)
+
+
 Q = np.average(L(w, coord_x, coord_y))
+print(w)
+print(Q)
+
+plt.show()
+

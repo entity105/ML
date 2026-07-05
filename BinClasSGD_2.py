@@ -1,3 +1,5 @@
+from matplotlib import pyplot as plt
+import graphs as g
 import numpy as np
 
 
@@ -30,6 +32,16 @@ Qe = np.average([loss(w, x, y) for x, y in zip(x_train, y_train)])# началь
 # Qe = np.average(loss(w, x_train.T, y_train))
 np.random.seed(0) # генерация одинаковых последовательностей псевдослучайных чисел
 
+# Визуализация
+fig, ax = g.create_window(title='Модель: $w_0 + w_1x_1 + w_2x_2 = 0$', ox_name='$x_1$', oy_name='$x_2$')
+g.drow_cls_points(ax, x_train, y_train)
+
+features = ['(-x_1)', '(-1)']
+left_part=r'x_2 = -\frac{w_1}{w_2}x_1 - \frac{w_0}{w_2} = a(x)'
+line = g.create_line(ax, features, left_part)
+edges = min(x_train[:, 1] - 3), max(x_train[:, 1] + 3)
+text = g.add_text(ax, 'Итерация: 0\n' f'Q = {Qe}\n' f'w = {w}')
+
 for i in range(N):
     k = np.random.randint(0, n_train - batch_size - 1)
 
@@ -42,4 +54,15 @@ for i in range(N):
     Qe = lm * loss_av_k + (1 - lm) * Qe
     w = w - nt * grad
 
+    # Обновляем
+    g.update_line(line, edges, w, features, left_part)
+    text.set_text(f'Итерация: {i + 1} / {N}\nQ = {Qe:.4f}\nw = {np.round(w, 2)}')
+    ax.legend()
+    plt.pause(0.005)
+
 Q = np.average([int(np.dot(w, x) * y < 0) for x, y in zip(x_train, y_train)])
+
+print(w)
+print(Q)
+
+plt.show()

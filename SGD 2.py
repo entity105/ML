@@ -1,4 +1,6 @@
 import numpy as np
+import graphs as g
+from matplotlib import pyplot as plt
 
 # x_i, y_i - элемент (число)
 # x, y - массивы (одномерные)
@@ -35,6 +37,12 @@ batch_size = 50 # размер мини-батча (величина K = 50)
 Qe = Q(w, coord_x, coord_y) # начальное значение среднего эмпирического риска
 np.random.seed(0) # генерация одинаковых последовательностей псевдослучайных чисел
 
+# Визуализация
+features = ['1', 'x', 'x^2', 'x^3']
+write_func = r'$y = 0.5x + 0.2x^2 - 0.05x^3 + 0.2sin(4x) - 2.5$'
+ax, model_line, text = g.approximation(coord_x, coord_y, write_func,
+                            features, w, float(Qe))
+
 for _ in range(N):
     k = np.random.randint(0, sz - batch_size)       # 0_[=====================|---------]_sz
 
@@ -44,4 +52,8 @@ for _ in range(N):
     w = w - eta * dQ_dw(w, X_sect, Y_sect, batch_size)
     Qe = lm*Q(w, X_sect, Y_sect) + (1 - lm) * Qe
 
+    g.approximation_update(ax, coord_x, w, model, model_line, features, text, _, Qe)
+
 Q = Q(w, coord_x, coord_y)
+
+plt.show()

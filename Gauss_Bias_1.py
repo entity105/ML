@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib import pyplot as plt
 
 np.random.seed(0)
 
@@ -55,3 +56,10 @@ def decision(data: np.array):
 
 predict = list(decision(x_train))
 Q = sum(int(a != y) for a, y in zip(predict, y_train))
+
+print(Q)
+
+# График
+# print(x_train.T[0].shape, y_train.shape)
+# plt.scatter(x_train.T[0], y_train)
+# plt.show()
