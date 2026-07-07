@@ -38,7 +38,7 @@ g.drow_cls_points(ax, x_train, y_train)
 
 features = ['(-x_1)', '(-1)']
 left_part=r'x_2 = -\frac{w_1}{w_2}x_1 - \frac{w_0}{w_2} = a(x)'
-line = g.create_line(ax, features, left_part)
+line = g.create_line_2D(ax, features, left_part)
 edges = min(x_train[:, 1] - 3), max(x_train[:, 1] + 3)
 text = g.add_text(ax, 'Итерация: 0\n' f'Q = {Qe}\n' f'w = {w}')
 
@@ -55,7 +55,7 @@ for i in range(N):
     w = w - nt * grad
 
     # Обновляем
-    g.update_line(line, edges, w, features, left_part)
+    g.update_line_2D(line, edges, w, features, left_part)
     text.set_text(f'Итерация: {i + 1} / {N}\nQ = {Qe:.4f}\nw = {np.round(w, 2)}')
     ax.legend()
     plt.pause(0.005)

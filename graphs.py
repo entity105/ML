@@ -1,14 +1,20 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
-def create_window(figsize=(10, 6), title=None, ox_name='x', oy_name='y') -> tuple:
+def create_window(*args, figsize=(10, 6), title=None, ox_name='x', oy_name='y') -> tuple:
     """Создаёт окно с 2D осями"""
-    fig, ax = plt.subplots(figsize=figsize)
-    ax.set_title(title)
-    ax.set_xlabel(ox_name)
-    ax.set_ylabel(oy_name)
-    ax.grid(True, alpha=0.3)
-    return fig, ax
+    fig, axs = plt.subplots(*args, figsize=figsize)
+    fig.suptitle(title, fontsize=16, fontweight='bold')
+    plt.tight_layout()
+    if len(args) == 0:
+        axs = [axs, ]
+    for ax in axs:
+        ax.set_xlabel(ox_name)
+        ax.set_ylabel(oy_name)
+        ax.grid(True, alpha=0.3)
+    return fig, *axs
+
+
 
 def drow2Dgraph(x, y, axis,
                 line='b-', linewidth=2, name_func=None,

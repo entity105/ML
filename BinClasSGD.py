@@ -32,14 +32,16 @@ Qe = np.average([loss(w, x, y) for x, y in zip(x_train, y_train)]) # начал�
 np.random.seed(0) # генерация одинаковых последовательностей псевдослучайных чисел
 
 # Визуализация
-fig, ax = g.create_window(title='Модель: $w_0 + w_1x_1 + w_2x_2 = 0$')
+fig, ax = g.create_window(title='SDG: Бинарная классификация')
+ax.set_title('Модель: $w_0 + w_1x_1 + w_2x_2 = 0$')
 g.drow_cls_points(ax, x_train, y_train)
 
 features = ['(-x_1)', '(-1)']
 left_part=r'x_2 = -\frac{w_1}{w_2}x_1 - \frac{w_0}{w_2} = a(x)'
-line = g.create_line(ax, features, left_part)
+line = g.create_line_2D(ax, features, left_part)
 edges = min(x_train[:, 1]), max(x_train[:, 1])
 text = g.add_text(ax, 'Итерация: 0\n' f'Q = {Qe}\n' f'w = {w}')
+# plt.ion()
 
 
 for i in range(N):
@@ -50,10 +52,10 @@ for i in range(N):
     Qe = lm * loss_k + (1 - lm) * Qe
 
     # Обновляем
-    g.update_line(line, edges, w, features, left_part)
+    g.update_line_2D(line, edges, w, features, left_part)
     text.set_text(f'Итерация: {i + 1} / 1000\nQ = {Qe:.4f}\nw = {np.round(w, 2)}')
     ax.legend()
-    plt.pause(0.005)
+    plt.pause(0.1)
 
 Q = np.average([int(np.dot(w, x) * y < 0) for x, y in zip(x_train, y_train)])
 print(w)
