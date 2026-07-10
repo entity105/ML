@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import graphs as g
+from graphs import MovePoint
 
 
 def func(x):
@@ -20,20 +20,28 @@ coord_x = np.arange(-5, 5, 0.1)
 coord_y = func(coord_x)
 
 formula = r'$f(x) = -0.5 x + 0.2 x^2 - 0.01 x^3 - 0.3 sin(4x)$'
-fig, ax1, ax2 = g.create_window(1, 2, figsize=(16, 7.5), title='Градиентный спуск')
-fig.subplots_adjust(top=0.88, bottom=0.1)
-itr_str = fig.text(0.2, 0.90, f'Итерация: 0 / {N}', ha='center', fontsize=14)
-fig.text(0.4, 0.90, formula, fontsize=14, fontweight='bold')
+ax_1_idx, ax_2_idx = (0, 0), (0, 1)
 
-g.drow2Dgraph(coord_x, coord_y, ax1)
-g.drow2Dgraph(coord_x, coord_y, ax2)
+# Создаём окно, подписываем, делаем оси с графиками
+w = MovePoint('Градиентный спуск', (1, 2), figsize=(16, 7.5))
+w.set_default_text_fig(N, formula)
+w.drow_graph(coord_x, coord_y, ax_1_idx)
+w.drow_graph(coord_x, coord_y, ax_2_idx)
 
-text1 = g.add_text(ax1, f'Координата: ({x_0:.2f}, {func(x_0):.2f})')
-text2 = g.add_text(ax2, f'Координата: ({x_0:.2f}, {func(x_0):.2f})')
-g.add_text(ax1, r'$v_{n+1} = \gamma \cdot v_n + (1 - \gamma )\eta \cdot \nabla f(x)$' '\n' r'$x_{n+1} = x_n - v_{n+1}$', x=0.4)
-g.add_text(ax2, r'$x_{n+1} = x_n - \eta \cdot \nabla f(x)$', x=0.6)
-point, = ax1.plot([x_0], [func(x_0)], 'ro', markersize=12)
-point2, = ax2.plot([x_0], [func(x_0)], 'ro', markersize=12)
+# Наполняем оси текстом
+text_point = f'Координата: ({x_0:.2f}, {func(x_0):.2f})'
+w.set_text_axis(text_point, ax_1_idx, to_updata=True)
+w.set_text_axis(text_point, ax_2_idx, to_updata=True)
+
+# Статичный текст
+text_1 = r'$v_{n+1} = \gamma \cdot v_n + (1 - \gamma )\eta \cdot \nabla f(x)$' '\n' r'$x_{n+1} = x_n - v_{n+1}$'
+text_2 = r'$x_{n+1} = x_n - \eta \cdot \nabla f(x)$'
+w.set_text_axis(text_1, ax_1_idx, coord_text=(0.5, 0.95))
+w.set_text_axis(text_2, ax_2_idx,coord_text=(0.5, 0.95))
+
+# Делаем точки
+w.make_point(x_1, func(x_1), ax_1_idx, to_update=True)
+w.make_point(x_2, func(x_2), ax_2_idx, to_update=True)
 
 plt.pause(2)
 for i in range(N):
@@ -44,14 +52,13 @@ for i in range(N):
     # Чистый GD
     x_2 = x_2 - eta * df(x_2)
 
-    itr_str.set_text(f'Итерация: {i + 1} / {N}')
-    y_1 = func(x_1)
-    point.set_data([x_1], [y_1])
-    text1.set_text(f'Координата: ({x_1:.2f}, {y_1:.2f})')
+    # Обновление
+    w.update_fig_text(0, f'Итерация: {i+1} / {N}')
+    w.updata_point(x_1, func(x_1), 0)
+    w.updata_ax_text(0, f'Координата: ({x_1:.2f}, {func(x_1):.2f})')
 
-    y_2 = func(x_2)
-    point2.set_data([x_2], [y_2])
-    text2.set_text(f'Координата: ({x_2:.2f}, {y_2:.2f})')
+    w.updata_point(x_2, func(x_2), 1)
+    w.updata_ax_text(1, f'Координата: ({x_2:.2f}, {func(x_2):.2f})')
 
     plt.pause(0.1)
 
