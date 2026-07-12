@@ -21,7 +21,7 @@ coord_y = func(coord_x)
 
 w = MovePoint('GD: оптимизатор NAG', (1, 2), figsize=(16, 7.5))
 ax_1_idx, ax_2_idx = (0, 0), (0, 1)
-w.set_default_text_fig(N, '$0.4 x + 0.1 sin(2x) + 0.2 cos(3x)$')    # 0
+w.set_default_text_fig(N, '$f(x) = 0.4 x + 0.1 sin(2x) + 0.2 cos(3x)$')    # 0
 w.drow_graph(coord_x, coord_y, ax_1_idx)
 w.drow_graph(coord_x, coord_y, ax_2_idx)
 

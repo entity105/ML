@@ -1,5 +1,5 @@
 import numpy as np
-import graphs as g
+from graphs import DynamicGraphs
 from matplotlib import pyplot as plt
 
 # x_i, y_i - элемент (число)
@@ -38,12 +38,18 @@ Qe = Q(w, coord_x, coord_y) # начальное значение среднег
 np.random.seed(0) # генерация одинаковых последовательностей псевдослучайных чисел
 
 # Визуализация
-features = ['1', 'x', 'x^2', 'x^3']
-write_func = r'$y = 0.5x + 0.2x^2 - 0.05x^3 + 0.2sin(4x) - 2.5$'
-ax, model_line, text = g.approximation(coord_x, coord_y, write_func,
-                            features, w, float(Qe))
+g = DynamicGraphs("Аппроксимация функции", figsize=(10, 6))
+g.set_default_text_fig(N, r"$model: a(x) = w_0 + w_1x + w_2x^2 + w_3x^3$")
+g.set_text_axis(f"Q = {Qe:.2f}", to_updata=True)
 
-for _ in range(N):
+func_str = r"$f(x) = 0.5x + 0.2x^2 - 0.05x^3 + 0.2sin(4x) - 2.5$"
+g.drow_graph(coord_x, coord_y, base_setting=False, color='blue', linewidth=3, label=func_str)
+
+model_str = f"$a(x) = {w[0]:.2f} + {w[1]:.2f}x + {w[2]:.2f}x^2 + {w[3]:.2f}x^3$"
+g.drow_graph(coord_x, model(w, coord_x), to_updata=True, base_setting=False, color='red', linewidth=3, label=model_str)
+
+plt.pause(1)
+for i in range(N):
     k = np.random.randint(0, sz - batch_size)       # 0_[=====================|---------]_sz
 
     X_sect = coord_x[k: k + batch_size]                 # x_0[--------|============|---------]
@@ -52,7 +58,13 @@ for _ in range(N):
     w = w - eta * dQ_dw(w, X_sect, Y_sect, batch_size)
     Qe = lm*Q(w, X_sect, Y_sect) + (1 - lm) * Qe
 
-    g.approximation_update(ax, coord_x, w, model, model_line, features, text, _, Qe)
+    new_y = model(w, coord_x)
+    updata_formula = f"$a(x) = {w[0]:.2f} + {w[1]:.2f}x + {w[2]:.2f}x^2 + {w[3]:.2f}x^3$"
+    g.updata_graphs(coord_x, new_y, new_label=updata_formula)
+    g.update_text(0, f'Итерация: {i + 1} / {N}')
+    g.update_text(1, f"Q = {Qe:.2f}")
+
+    plt.pause(0.05)
 
 Q = Q(w, coord_x, coord_y)
 
