@@ -1,4 +1,6 @@
 import numpy as np
+from graphs import MovePoint
+from matplotlib import pyplot as plt
 
 
 def func(x):
@@ -9,13 +11,48 @@ def df(x):
 
 n = 0.5
 x_0 = 4.0
-x = x_0
-N = 200
+x_1 = x_2 = x_3 = x_4 = x_0
+N = 50
 alpha = 0.8
 G = 0
 epsilon = 0.01
 
+coord_x = np.arange(-3, 8, 0.1)
+coord_y = func(coord_x)
+
+w = MovePoint('GD: оптимизатор RMSProp', (1, 2), figsize=(16, 7.5))
+ax_1_idx, ax_2_idx = (0, 0), (0, 1)
+w.set_default_text_fig(N, '$f(x) = 2x + 0.1x^3 + 2cos(3x)$')    # 0
+w.drow_graph(coord_x, coord_y, ax_1_idx)
+w.drow_graph(coord_x, coord_y, ax_2_idx)
+
+w.set_text_axis("GD + RMSProp", ax_1_idx, xy:=(0.4, 0.95))
+w.set_text_axis("GD", ax_2_idx, xy)
+
+y_0 = func(x_0)
+w.set_text_axis(f"Координата: ({x_0:.2f}, {y_0:.2f})", ax_1_idx, xy:=(0.03, 0.95), to_updata=True) # 0
+w.set_text_axis(f"Координата: ({x_0:.2f}, {y_0:.2f})", ax_2_idx, xy, to_updata=True) # 1
+
+w.make_point(x_0, y_0, ax_1_idx, to_update=True) # 0
+w.make_point(x_0, y_0, ax_2_idx, to_update=True) # 1
+
+plt.pause(1)
 for i in range(N):
-    G = alpha*G + (1-alpha)*df(x)**2
-    x = x - n*df(x)/(G**0.5 + epsilon)
-print(x)
+    G = alpha*G + (1-alpha)*df(x_1)**2
+    x_1 = x_1 - n*df(x_1)/(G**0.5 + epsilon)
+
+    lmd = 1 / min(i + 1, 100)
+    x_2 = x_2 - lmd * np.sign(df(x_2))
+
+    w.update_fig_text(0, f"Итерация: {i + 1} / {N}")
+    y_1, y_2 = func(x_1), func(x_2)
+    w.updata_ax_text(0, f"Координата: ({x_1:.2f}, {y_1:.2f})")
+    w.updata_ax_text(1, f"Координата: ({x_2:.2f}, {y_2:.2f})")
+
+    w.updata_point(x_1, y_1, 0)
+    w.updata_point(x_2, y_2, 1)
+
+    plt.pause(0.5)
+
+print(x_1, x_2, sep='\n')
+plt.show()

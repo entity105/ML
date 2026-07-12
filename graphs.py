@@ -42,7 +42,7 @@ def approximation(x, y, func_str: str,
                   features: list, w, Q: float):
     formula = generate_formula(features, w)
     fig, ax = create_window(title='Аппроксимация функции')
-    drow2Dgraph(x, y, ax, name_func=func_str)
+    drow2Dgraph(ax, x, y, name_func=func_str)
     # plt.ion()
     model_line, = ax.plot([], [], 'r-', linewidth=2, label=formula)
     text = ax.text(
@@ -193,7 +193,91 @@ class MovePoint:
         self.points[idx].set_data([new_x], [new_y])
 
     def select_axis(self, ax_idx:tuple[int, int]=None):
-        """Принимает двумерный индекс, возвращает """
+        """Принимает двумерный индекс, возвращает ось"""
+        i, j = ax_idx
+        try:
+            selected_axis = self.axes[i][j] if ax_idx else self.axes
+        except IndexError:
+            raise IndexError(f"Оси с координатами {ax_idx} не существует")
+        return selected_axis
+
+
+class DynamicGraphs:
+    def __init__(self, title:str, axis_place:tuple[int, int]=(), *args, **kwargs):
+        """Создаёт окно с заголовком и оси. *args, **kwargs - остальные аргументы plt.subplots()"""
+        fig, axes = plt.subplots(*axis_place, *args, **kwargs)
+        fig.suptitle(title, fontsize=16, fontweight='bold')
+        plt.tight_layout()
+
+        self.fig = fig
+        self.axes = [axes, ] if axis_place and axis_place[0] == 1 else axes  # Либо матрица, либо скаляр
+
+        self.texts = []
+        self.graphs = []
+
+    def set_default_text_fig(self, n:int, formula:str):
+        """Добавляет стандартный текст в окно"""
+        y_place = 0.9
+        itr_str = self.fig.text(0.2, y_place, f'Итерация: 0 / {n}', ha='center', fontsize=14)
+        self.fig.text(0.4, y_place, formula, fontsize=14, fontweight='bold')
+        self.fig.subplots_adjust(top=y_place - 0.02, bottom=0.1)
+        self.texts.append(itr_str)
+
+    def set_text_fig(self, text:str, coord_text:tuple[float, float]=(0.4, 0.9), to_updata=False, *args, **kwargs):
+        """Пользовательский текст для окна, to_updata=True позволяет далее обновлять его"""
+        text_obj = self.fig.text(*coord_text, text, *args, **kwargs)
+        if to_updata:
+            self.texts.append(text_obj)
+        self.fig.subplots_adjust(top=coord_text[1] - 0.02, bottom=0.1)
+
+    def update_text(self, idx:int, new_text:str):
+        """Обновить текст по индексу в списке"""
+        self.texts[idx].set_text(new_text)
+
+    def set_text_axis(self, text:str, ax_idx:tuple[int, int]=None, coord_text:tuple[float, float]=(0.1, 0.95), to_updata=False, base_setting=True, **kwargs):
+        """Пользовательский текст для оси по индексу ax_idx (если осей > 1), to_updata=True позволяет далее обновлять его"""
+        selected_axis = self.select_axis(ax_idx)
+
+        if base_setting:
+            kwargs = {'transform': selected_axis.transAxes,
+                      'fontsize' : 12,
+                      'verticalalignment' : 'top',
+                      'bbox' : dict(  # 6. Подложка (рамка)
+                            boxstyle='round',  # — закруглённые углы
+                            facecolor='white',  # — цвет фона
+                            alpha=0.8  # — прозрачность (0.8 = почти непрозрачный)
+                      )
+            }
+
+        text_obj = selected_axis.text(*coord_text, text, **kwargs)
+        if to_updata:
+            self.texts.append(text_obj)
+
+    def drow_graph(self, x_data, y_data, ax_idx:tuple[int, int]=None, base_setting=True, to_updata=False, axis_name=('x', 'y'), **setting):
+        """Делает график на оси по индексу ax_idx (если осей > 1)"""
+        selected_axis = self.select_axis(ax_idx)
+
+        if base_setting:
+            setting = dict(color='blue', linewidth=3, label=None)
+
+        graph = selected_axis.plot(x_data, y_data, **setting)
+        selected_axis.set_xlabel(axis_name[0])
+        selected_axis.set_ylabel(axis_name[1])
+        selected_axis.grid(True, alpha=0.3)
+        if to_updata:
+            self.graphs.append(*graph)
+        selected_axis.legend()
+
+    def updata_graphs(self, x_data, y_data, idx:int=None, new_label=None):
+        graph_obj = self.graphs[idx] if idx else self.graphs[0]
+        graph_obj.set_data(x_data, y_data)
+        if new_label:
+            graph_obj.set_label(new_label)
+            self.axes.legend()
+
+
+    def select_axis(self, ax_idx:tuple[int, int]=None):
+        """Принимает двумерный индекс, возвращает ось"""
         try:
             selected_axis = self.axes[ax_idx[0]][ax_idx[1]] if ax_idx else self.axes
         except IndexError:

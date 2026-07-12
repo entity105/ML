@@ -1,6 +1,7 @@
 import numpy as np
-import graphs as g
 from matplotlib import pyplot as plt
+from graphs import DynamicGraphs
+
 
 # исходная функция, которую нужно аппроксимировать моделью a(x)
 def func(x):
@@ -29,21 +30,31 @@ sz = len(coord_x)	# количество значений функций (точ
 eta = np.array([0.1, 0.01, 0.001, 0.0001]) # шаг обучения для каждого параметра w0, w1, w2, w3
 w = np.array([0., 0., 0., 0.]) # начальные значения параметров модели
 N = 200 # число итераций градиентного алгоритма
+Q_0 = Q(model(w, coord_x), coord_y)
 
-
-# График
 # Визуализация
-features = ['1', 'x', 'x^2', 'x^3']
-write_func = r'$y = 0.1x^2 - sin(x) + 5$'
-ax, model_line, text = g.approximation(coord_x, coord_y, write_func,
-                            features, w, Q=0)
 
+g = DynamicGraphs("Аппроксимация функции", figsize=(10, 6))
+g.set_default_text_fig(N, '$model: a(x) = w_0 + w_1x + w_2x^2 + w_3x^3$')   # 0
+g.set_text_axis(f"Q = {Q_0:.3f}", coord_text=(0.03, 0.95), to_updata=True)     # 1
 
+formula_1 = r'$y = 0.1x^2 - sin(x) + 5$'
+g.drow_graph(coord_x, coord_y, base_setting=False, color='blue', linewidth=3, label=formula_1)
+
+formula_2 = f"{w[0]} + {w[1]}x + {w[2]}x^2 + {w[3]}x^3"
+g.drow_graph(coord_x, model(w, coord_x) + 4, to_updata=True, base_setting=False, color='red', linewidth=3, label=formula_2)
+
+plt.pause(1)
 for i in range(N):
     w = w - eta * dQ(w, coord_x, coord_y)
+    y = model(w, coord_x)
+    Q_i = Q(y, coord_y)
 
-    g.approximation_update(ax, coord_x, w, model, model_line, features,
-                           text, i, Q=0, pause=0.1)
+    update_formula = f"$a(x) = {w[0]:.2f} + {w[1]:.2f}x + {w[2]:.2f}x^2 + {w[3]:.2f}x^3$"
+    g.updata_graphs(coord_x, y, new_label=update_formula)
+    g.update_text(0, f'Итерация: {i+1} / {N}')
+    g.update_text(1, f"Q = {Q_i:.3f}")
+    plt.pause(0.1)
 
 Q = Q(model(w, coord_x), coord_y)
 
