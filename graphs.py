@@ -168,12 +168,11 @@ class DynamicGraphs:
         """Обновить текст по индексу в списке"""
         self.texts[idx].set_text(new_text)
 
-    def set_text_axis(self, text:str, ax_idx:tuple[int, int]=None, coord_text:tuple[float, float]=(0.1, 0.95), to_updata=False, base_setting=True, **kwargs):
+    def set_text_axis(self, text:str, ax_idx:tuple[int, int]=None, coord_text:tuple[float, float]=(0.1, 0.95), to_updata=False, **kwargs):
         """Пользовательский текст для оси по индексу ax_idx (если осей > 1), to_updata=True позволяет далее обновлять его"""
         selected_axis = self.select_axis(ax_idx)
 
-        if base_setting:
-            kwargs = {'transform': selected_axis.transAxes,
+        settings = {'transform': selected_axis.transAxes,
                       'fontsize' : 12,
                       'verticalalignment' : 'top',
                       'bbox' : dict(  # 6. Подложка (рамка)
@@ -182,19 +181,22 @@ class DynamicGraphs:
                             alpha=0.8  # — прозрачность (0.8 = почти непрозрачный)
                       )
             }
+        for k, v in kwargs.items():
+            settings[k] = v
 
-        text_obj = selected_axis.text(*coord_text, text, **kwargs)
+        text_obj = selected_axis.text(*coord_text, text, **settings)
         if to_updata:
             self.texts.append(text_obj)
 
-    def drow_graph(self, x_data, y_data, ax_idx:tuple[int, int]=None, base_setting=True, to_updata=False, axis_name=('x', 'y'), **setting):
+    def drow_graph(self, x_data, y_data, ax_idx:tuple[int, int]=None, to_updata=False, axis_name=('x', 'y'), **custom_settings):
         """Делает график на оси по индексу ax_idx (если осей > 1)"""
         selected_axis = self.select_axis(ax_idx)
 
-        if base_setting:
-            setting = dict(color='blue', linewidth=3, label=None)
+        settings = dict(color='blue', linewidth=3, label=None)
+        for k, v in custom_settings.items():
+            settings[k] = v
 
-        graph = selected_axis.plot(x_data, y_data, **setting)
+        graph = selected_axis.plot(x_data, y_data, **settings)
         selected_axis.set_xlabel(axis_name[0])
         selected_axis.set_ylabel(axis_name[1])
         selected_axis.grid(True, alpha=0.3)
@@ -207,8 +209,6 @@ class DynamicGraphs:
         graph_obj.set_data(x_data, y_data)
         if new_label:
             graph_obj.set_label(new_label)
-            self.axes.legend()
-
 
     def select_axis(self, ax_idx:tuple[int, int]=None):
         """Принимает двумерный индекс, возвращает ось"""
@@ -217,3 +217,11 @@ class DynamicGraphs:
         except IndexError:
             raise IndexError(f"Оси с координатами {ax_idx} не существует")
         return selected_axis
+
+    def legend_all_ax(self):
+        if isinstance(self.axes, list):
+            for row in self.axes:
+                for ax in row:
+                    ax.legend()
+        else:
+            self.axes.legend()
