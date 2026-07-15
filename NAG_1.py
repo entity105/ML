@@ -41,13 +41,13 @@ for i in range(N):
     lmd = 1 / min(i + 1, 100)
     x_2 = x_2 - lmd * np.sign(df(x_2))
 
-    w.update_fig_text(0, f"Итерация: {i + 1} / {N}")
+    w.update_text(0, f"Итерация: {i + 1} / {N}")
     y_1, y_2 = func(x_1), func(x_2)
-    w.updata_ax_text(0, f"Координата: ({x_1:.2f}, {y_1:.2f})")
-    w.updata_ax_text(1, f"Координата: ({x_2:.2f}, {y_2:.2f})")
+    w.update_text(0, f"Координата: ({x_1:.2f}, {y_1:.2f})")
+    w.update_text(1, f"Координата: ({x_2:.2f}, {y_2:.2f})")
 
-    w.updata_point(x_1, y_1, 0)
-    w.updata_point(x_2, y_2, 1)
+    w.update_point(x_1, y_1, 0)
+    w.update_point(x_2, y_2, 1)
 
     plt.pause(0.2)
 

@@ -31,10 +31,10 @@ g.set_text_axis(f"Q = {Q:.4f}", coord_text=(0.03, 0.95))
 g.set_text_axis(f"w = {[round(float(w_i), 2) for w_i in w]}", coord_text=(0.03, 0.85))
 
 func_str = r"$f(x) = 0.1x + 0.1x^2 - 0.5sin(2x) + cos(4x) + 10$"
-g.drow_graph(x, y, label=func_str)
+g.draw_graph(x, y, label=func_str)
 
 model_str = r"$a(x) = w_0 + w_1x + w_2x^2 + w_3x^3 + ... + w_{21}x^{21}$"
-g.drow_graph(x, model_res, color='red', label=model_str)
+g.draw_graph(x, model_res, color='red', label=model_str)
 
 plt.show()
 

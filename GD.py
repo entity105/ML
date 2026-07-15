@@ -31,8 +31,8 @@ for i in range(N):
     x = x - lmd * np.sign(df(x))
 
     y = func(x)
-    w.updata_point(x, y, 0)
-    w.updata_ax_text(0, f'Итерация i = {i+1} / {N}, координата: ({x:.4f}, {y:.4f})')
+    w.update_point(x, y, 0)
+    w.update_text(0, f'Итерация i = {i+1} / {N}, координата: ({x:.4f}, {y:.4f})')
     plt.pause(0.1)
 
 print(x)

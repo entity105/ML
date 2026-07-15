@@ -24,10 +24,10 @@ g.set_text_axis(f"Q = {Q:.4f}", coord_text=(0.03, 0.95))
 g.set_text_axis(f"w = {[round(float(w_i), 2) for w_i in w]}", coord_text=(0.03, 0.85))
 
 func_str = r"$f(x) = 0.5x + 0.2x^2 - 0.05x^3 + 0.2sin(4x) - 2.5$"
-g.drow_graph(coord_x, y_train, label=func_str)
+g.draw_graph(coord_x, y_train, label=func_str)
 
 model_str = r"$a(x) = w_0 + w_1x + w_2x^2 + w_3x^3$"
-g.drow_graph(coord_x, model_res, color='red', label=model_str)
+g.draw_graph(coord_x, model_res, color='red', label=model_str)
 
 plt.show()
 

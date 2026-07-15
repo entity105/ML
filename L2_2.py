@@ -43,20 +43,19 @@ np.random.seed(0) # генерация одинаковых последоват
 
 # Визуализация
 g = DynamicGraphs("Аппроксимация функции", (1, 2), figsize=(10, 6))
-ax_1_idx, ax_2_idx = (0, 0), (0, 1)
-g.set_text_axis("SDG + L2", ax_1_idx, (0.1, 0.88))
-g.set_text_axis("SDG", ax_2_idx, (0.1, 0.88))
+g.set_text_axis("SDG + L2", 0, (0.1, 0.88))
+g.set_text_axis("SDG", 1, (0.1, 0.88))
 g.set_default_text_fig(n_iter, r"$model: a(x) = w_0 + w_1x + w_2x^2 + w_3x^3 + w_4x^4$")        # 0
-g.set_text_axis(f"Q = {Qe_1:.2f}", ax_1_idx, to_updata=True)                                       # 1
-g.set_text_axis(f"Q = {Qe_2:.2f}", ax_2_idx, to_updata=True)                                       # 2
+g.set_text_axis(f"Q = {Qe_1:.2f}", 0, to_update=True)                                       # 1
+g.set_text_axis(f"Q = {Qe_2:.2f}", 1, to_update=True)                                       # 2
 
 func_str = r"$f(x) = 0.5x + 0.2x^2 - 0.05x^3 + 0.2sin(4x) - 2.5$"
-g.drow_graph(coord_x, coord_y, ax_1_idx, label=func_str)
-g.drow_graph(coord_x, coord_y, ax_2_idx, label=func_str)
+g.draw_graph(coord_x, coord_y, 0, label=func_str)
+g.draw_graph(coord_x, coord_y, 1, label=func_str)
 
 model_str = f"$a(x) = {w_1[0]:.2f} + {w_1[1]:.2f}x + {w_1[2]:.2f}x^2 + {w_1[3]:.2f}x^3 + {w_1[4]:.2f}x^4$"
-g.drow_graph(coord_x, model(w_1, coord_x), ax_1_idx, to_updata=True, color='red', label=model_str)   # 0
-g.drow_graph(coord_x, model(w_1, coord_x), ax_2_idx, to_updata=True, color='red', label=model_str)   # 1
+g.draw_graph(coord_x, model(w_1, coord_x), 0, to_update=True, color='red', label=model_str)   # 0
+g.draw_graph(coord_x, model(w_1, coord_x), 1, to_update=True, color='red', label=model_str)   # 1
 
 plt.pause(1)
 for i in range(n_iter):
@@ -71,8 +70,8 @@ for i in range(n_iter):
     w_1 = w_1 - eta * grad
 
     new_y1 = model(w_1, coord_x)
-    updata_formula = f"$a(x) = {w_1[0]:.2f} + {w_1[1]:.2f}x + {w_1[2]:.2f}x^2 + {w_1[3]:.2f}x^3 + {w_1[4]:.2f}x^4$"
-    g.updata_graphs(coord_x, new_y1, 0, new_label=updata_formula)
+    updata_formula = f"$a(x) = {w_1[0]:.2f} {w_1[1]:+.2f}x {w_1[2]:+.2f}x^2 {w_1[3]:+.2f}x^3 {w_1[4]:+.3f}x^4$"
+    g.update_graphs(coord_x, new_y1, 0, new_label=updata_formula)
     g.update_text(0, f'Итерация: {i + 1} / {n_iter}')
     g.update_text(1, f"Q = {Qe_1:.2f}")
 
@@ -82,11 +81,13 @@ for i in range(n_iter):
     w_2 = w_2 - eta * grad
 
     new_y2 = model(w_2, coord_x)
-    updata_formula = f"$a(x) = {w_2[0]:.2f} + {w_2[1]:.2f}x + {w_2[2]:.2f}x^2 + {w_2[3]:.2f}x^3 + {w_2[4]:.2f}x^4$"
-    g.updata_graphs(coord_x, new_y2, 1, new_label=updata_formula)
+    updata_formula = f"$a(x) = {w_2[0]:.2f} {w_2[1]:+.2f}x {w_2[2]:+.2f}x^2 {w_2[3]:+.2f}x^3 {w_2[4]:+.3f}x^4$"
+    g.update_graphs(coord_x, new_y2, 1, new_label=updata_formula)
     g.update_text(2, f"Q = {Qe_2:.2f}")
 
-    g.legend_all_ax()
+    g.update_legend(0, 'upper right')
+    g.update_legend(1, 'upper right')
+
     plt.pause(0.01)
 
 

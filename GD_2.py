@@ -39,10 +39,10 @@ g.set_default_text_fig(N, '$model: a(x) = w_0 + w_1x + w_2x^2 + w_3x^3$')   # 0
 g.set_text_axis(f"Q = {Q_0:.3f}", coord_text=(0.03, 0.95), to_updata=True)     # 1
 
 formula_1 = r'$y = 0.1x^2 - sin(x) + 5$'
-g.drow_graph(coord_x, coord_y, base_setting=False, color='blue', linewidth=3, label=formula_1)
+g.draw_graph(coord_x, coord_y, label=formula_1)
 
 formula_2 = f"{w[0]} + {w[1]}x + {w[2]}x^2 + {w[3]}x^3"
-g.drow_graph(coord_x, model(w, coord_x) + 4, to_updata=True, base_setting=False, color='red', linewidth=3, label=formula_2)
+g.draw_graph(coord_x, model(w, coord_x) + 4, to_updata=True, color='red', label=formula_2)
 
 plt.pause(1)
 for i in range(N):
@@ -51,7 +51,7 @@ for i in range(N):
     Q_i = Q(y, coord_y)
 
     update_formula = f"$a(x) = {w[0]:.2f} + {w[1]:.2f}x + {w[2]:.2f}x^2 + {w[3]:.2f}x^3$"
-    g.updata_graphs(coord_x, y, new_label=update_formula)
+    g.update_graphs(coord_x, y, new_label=update_formula)
     g.update_text(0, f'Итерация: {i+1} / {N}')
     g.update_text(1, f"Q = {Q_i:.3f}")
     plt.pause(0.1)
