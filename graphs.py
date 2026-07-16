@@ -1,44 +1,6 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
-def drow_cls_points(ax, x_train, y_train):
-    # Добавить проверки на массивы
-    # Сделать многоклассовую клас.
-    x_0 = x_train[y_train == -1]
-    x_1 = x_train[y_train == 1]
-    ax.scatter(x_0[:, 1], x_0[:, 2], color='red')
-    ax.scatter(x_1[:, 1], x_1[:, 2], color='blue')
-
-def create_line_2D(ax, features, left_part):
-    w_norm = [0, 0]
-    formula = generate_formula(features, w_norm, left_part=left_part)
-    line, = ax.plot([], [], label=formula)
-    ax.legend()
-    return line
-
-def add_text(ax, text:str, x=0.02, y=0.95):
-    text = ax.text(
-        x, y,  # 1. Координаты (x, y)
-        text,  # 2. Текст
-        transform=ax.transAxes,  # 3. Система координат
-        fontsize=12,  # 4. Размер шрифта
-        verticalalignment='top',  # 5. Вертикальное выравнивание
-        bbox=dict(  # 6. Подложка (рамка)
-            boxstyle='round',  # — закруглённые углы
-            facecolor='white',  # — цвет фона
-            alpha=0.8  # — прозрачность (0.8 = почти непрозрачный)
-        )
-    )
-    return text
-
-def update_line_2D(line, edges:tuple, w, features:list, left_part:str):
-    w_norm = [w[1] / w[2], w[0] / w[2]]
-    updated_y = [-x * w_norm[0] - w_norm[1] for x in edges]
-    line.set_data(edges, updated_y)
-    line.set_label(
-         generate_formula(features, w_norm, left_part=left_part)
-    )
-
 class Init:
     """Базовый класс"""
 
@@ -104,6 +66,7 @@ class Init:
         selected_axis.set_xlabel(axis_name[0])
         selected_axis.set_ylabel(axis_name[1])
         selected_axis.grid(True, alpha=0.3)
+        selected_axis.legend()
         return graph_obj
 
     def _select_axis(self, ax_idx:int = 0):
@@ -161,3 +124,51 @@ class DynamicGraphs(Init):
     def update_legend(self, ax_idx: int = 0, loc: str = 'lower right'):
         ax = self.axes[ax_idx]
         ax.legend(loc=loc)
+
+
+class ClassificationPlot(Init):
+    def __init__(self, title:str, axis_place:tuple[int, int]=(), *args, **kwargs):
+        super().__init__(title, axis_place, *args, **kwargs)
+
+        self.graphs = []
+
+        self.lim_x = None
+        self.lim_y = None
+
+    def draw_cls_points(self, coords, classes, ax_idx: int = 0):
+        classes = np.array(classes)
+        coords = np.array(coords)
+        ax = self._select_axis(ax_idx)
+        colors = (
+            'blue', 'red', 'green', 'orange', 'purple',
+            'brown', 'pink', 'gray', 'cyan', 'magenta',
+            'olive', 'teal', 'navy', 'coral', 'lime'
+        )
+        classes_set = tuple(set(classes))
+        if len(classes_set) > len(colors):
+            raise ValueError("Слишком много классов")
+
+        for cls, color in zip(classes_set, colors):
+            x = coords[classes == cls]
+            ax.scatter(x[:, 0], x[:, 1], color=color)
+
+    def draw_line_2D(self, coords, ax_idx:int = 0, to_update=False, ε:float=0, **custom_settings):
+        self.__save_edge_pnts(coords, ε)
+
+        graph_obj = super().draw_graph(self.lim_x, self.lim_y, ax_idx, **custom_settings)
+        if to_update:
+            self.graphs.append(*graph_obj)
+
+    def __save_edge_pnts(self, coords, ε:float=0):
+        pnt_1 = min(coords, key=lambda p: p[0])
+        pnt_2 = max(coords, key=lambda p: p[0])
+        self.lim_x = pnt_1[0] - ε, pnt_2[0] + ε
+        self.lim_y = pnt_1[1] - ε, pnt_2[1] + ε
+
+    def update_line_2D(self, w:np.ndarray, idx:int=0):
+        line_obj = self.graphs[idx]
+        x = self.lim_x
+
+        w_norm = [w[1] / w[2], w[0] / w[2]]
+        updated_y = [-x_i * w_norm[0] - w_norm[1] for x_i in x]
+        line_obj.set_data(x, updated_y)
