@@ -1,5 +1,6 @@
+import matplotlib.pyplot as plt
 import numpy as np
-
+from graphs import ClassificationPlot
 
 # логарифмическая функция потерь
 def loss(w, x, y):
@@ -33,6 +34,14 @@ eps = 0.01 # параметр для RMSProp
 Qe = np.average([loss(w, x, y) for x, y in zip(x_train, y_train)])# начальное значение среднего эмпирического риска
 np.random.seed(0) # генерация одинаковых последовательностей псевдослучайных чисел
 
+# Визуализация
+c = ClassificationPlot("SDG: Бинарная классификация", figsize=(15, 7.5))
+c.set_default_text_fig(N, 'Модель: $w_0 + w_1x_1 + w_2x_2 = 0$')
+c.set_text_axis(f'Q = {Qe}\nw = {w}', coord_text=(0.02, 0.95), to_update=True, fontsize=15)
+
+c.draw_cls_points(data_x, data_y)
+c.draw_line_2D(to_update=True, axis_name=('$x=x_1$', '$y=x_2$'), label=r'$y = -\frac{w_1}{w_2}x - \frac{w_0}{w_2} = a(x)$')
+
 for i in range(N):
     k = np.random.randint(0, n_train - batch_size - 1)  # n_train - размер выборки (массива x_train)
 
@@ -46,8 +55,15 @@ for i in range(N):
     w = w - nt * grad / (np.sqrt(G) + eps)
     Qe = lm * av_loss + (1 - lm) * Qe
 
+    c.update_line_2D(w)
+    c.update_text(0, f'Итерация: {i + 1} / {N}')
+    c.update_text(1, f'Q = {Qe:.3f}\nw = {w.round(2)}\n'rf'$w_n = [{-w[1]/w[2]:.2f}, {-w[0]/w[2]:.2f}]$')
+    plt.pause(0.005)
+
 Q = np.average([int(np.dot(w, x) * y < 0) for x, y in zip(x_train, y_train)])
 
 print(w)
 print(Q)
 print(Qe)
+
+plt.show()

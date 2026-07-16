@@ -20,18 +20,17 @@ coord_x = np.arange(-3, 8, 0.1)
 coord_y = func(coord_x)
 
 w = MovePoint('GD: оптимизатор NAG', (1, 2), figsize=(16, 7.5))
-ax_1_idx, ax_2_idx = (0, 0), (0, 1)
 w.set_default_text_fig(N, '$f(x) = 0.4 x + 0.1 sin(2x) + 0.2 cos(3x)$')    # 0
-w.drow_graph(coord_x, coord_y, ax_1_idx)
-w.drow_graph(coord_x, coord_y, ax_2_idx)
+w.draw_graph(coord_x, coord_y, 0)
+w.draw_graph(coord_x, coord_y, 1)
 
-w.set_text_axis("GD + NAG", ax_1_idx, (0.4, 0.95))
-w.set_text_axis("GD", ax_2_idx, (0.4, 0.95))
-w.set_text_axis(f"Координата: ({x_0:.2f}, {func(x_0):.2f})", ax_1_idx, (0.03, 0.95), to_updata=True) # 0
-w.set_text_axis(f"Координата: ({x_0:.2f}, {func(x_0):.2f})", ax_2_idx, (0.03, 0.95), to_updata=True) # 1
+w.set_text_axis("GD + NAG", 0, (0.4, 0.95))
+w.set_text_axis("GD", 1, (0.4, 0.95))
+w.set_text_axis(f"Координата: ({x_0:.2f}, {func(x_0):.2f})", 0, (0.03, 0.95), to_update=True) # 0
+w.set_text_axis(f"Координата: ({x_0:.2f}, {func(x_0):.2f})", 1, (0.03, 0.95), to_update=True) # 1
 
-w.make_point(x_1, func(x_1), ax_1_idx, to_update=True) # 0
-w.make_point(x_2, func(x_2), ax_2_idx, to_update=True) # 1
+w.make_point(x_1, func(x_1), 0, to_update=True) # 0
+w.make_point(x_2, func(x_2), 1, to_update=True) # 1
 
 plt.pause(1)
 for i in range(N):

@@ -1,5 +1,5 @@
 from matplotlib import pyplot as plt
-import graphs as g
+from graphs import ClassificationPlot
 import numpy as np
 
 
@@ -33,14 +33,12 @@ Qe = np.average([loss(w, x, y) for x, y in zip(x_train, y_train)])# началь
 np.random.seed(0) # генерация одинаковых последовательностей псевдослучайных чисел
 
 # Визуализация
-fig, ax = g.create_window(title='Модель: $w_0 + w_1x_1 + w_2x_2 = 0$', ox_name='$x_1$', oy_name='$x_2$')
-g.drow_cls_points(ax, x_train, y_train)
+c = ClassificationPlot("SDG: Бинарная классификация", figsize=(15, 7.5))
+c.set_default_text_fig(N, 'Модель: $w_0 + w_1x_1 + w_2x_2 = 0$')
+c.set_text_axis(f'Q = {Qe}\nw = {w}', coord_text=(0.02, 0.95), to_update=True, fontsize=15)
 
-features = ['(-x_1)', '(-1)']
-left_part=r'x_2 = -\frac{w_1}{w_2}x_1 - \frac{w_0}{w_2} = a(x)'
-line = g.create_line_2D(ax, features, left_part)
-edges = min(x_train[:, 1] - 3), max(x_train[:, 1] + 3)
-text = g.add_text(ax, 'Итерация: 0\n' f'Q = {Qe}\n' f'w = {w}')
+c.draw_cls_points(data_x, data_y)
+c.draw_line_2D(to_update=True, axis_name=('$x=x_1$', '$y=x_2$'), label=r'$y = -\frac{w_1}{w_2}x - \frac{w_0}{w_2} = a(x)$')
 
 for i in range(N):
     k = np.random.randint(0, n_train - batch_size - 1)
@@ -55,9 +53,9 @@ for i in range(N):
     w = w - nt * grad
 
     # Обновляем
-    g.update_line_2D(line, edges, w, features, left_part)
-    text.set_text(f'Итерация: {i + 1} / {N}\nQ = {Qe:.4f}\nw = {np.round(w, 2)}')
-    ax.legend()
+    c.update_line_2D(w)
+    c.update_text(0, f'Итерация: {i + 1} / {N}')
+    c.update_text(1, f'Q = {Qe:.3f}\nw = {w.round(2)}\n'rf'$w_n = [{-w[1]/w[2]:.2f}, {-w[0]/w[2]:.2f}]$')
     plt.pause(0.005)
 
 Q = np.average([int(np.dot(w, x) * y < 0) for x, y in zip(x_train, y_train)])

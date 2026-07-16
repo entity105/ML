@@ -131,11 +131,21 @@ class ClassificationPlot(Init):
         super().__init__(title, axis_place, *args, **kwargs)
 
         self.graphs = []
-
         self.lim_x = None
-        self.lim_y = None
 
-    def draw_cls_points(self, coords, classes, ax_idx: int = 0):
+    def __set_lims_ax(self, coords, ax_idx: int = 0, ε:float=0.5):
+        x_min = min(coords, key=lambda t: t[0])[0] - ε
+        x_max = max(coords, key=lambda t: t[0])[0] + ε
+        self.lim_x = x_min, x_max
+        ax = self._select_axis(ax_idx)
+        ax.set_xlim(x_min, x_max)
+
+        y_min = min(coords, key=lambda t: t[1])[1] - ε
+        y_max = max(coords, key=lambda t: t[1])[1] + ε
+        ax.set_ylim(y_min, y_max)
+
+    def draw_cls_points(self, coords, classes, ax_idx: int = 0, ε:float=0.5):
+        self.__set_lims_ax(coords, ax_idx, ε)
         classes = np.array(classes)
         coords = np.array(coords)
         ax = self._select_axis(ax_idx)
@@ -152,18 +162,17 @@ class ClassificationPlot(Init):
             x = coords[classes == cls]
             ax.scatter(x[:, 0], x[:, 1], color=color)
 
-    def draw_line_2D(self, coords, ax_idx:int = 0, to_update=False, ε:float=0, **custom_settings):
-        self.__save_edge_pnts(coords, ε)
+    def draw_line_2D(self, coords:list[tuple, tuple]=None, ax_idx:int = 0, to_update=False, **custom_settings):
+        if coords:
+            x = coords[0][0], coords[1][0]
+            y = coords[0][1], coords[1][1]
+        else:
+            x = self.lim_x
+            y = (0, 0)
 
-        graph_obj = super().draw_graph(self.lim_x, self.lim_y, ax_idx, **custom_settings)
+        graph_obj = super().draw_graph(x, y, ax_idx, **custom_settings)
         if to_update:
             self.graphs.append(*graph_obj)
-
-    def __save_edge_pnts(self, coords, ε:float=0):
-        pnt_1 = min(coords, key=lambda p: p[0])
-        pnt_2 = max(coords, key=lambda p: p[0])
-        self.lim_x = pnt_1[0] - ε, pnt_2[0] + ε
-        self.lim_y = pnt_1[1] - ε, pnt_2[1] + ε
 
     def update_line_2D(self, w:np.ndarray, idx:int=0):
         line_obj = self.graphs[idx]

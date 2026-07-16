@@ -37,8 +37,9 @@ c.set_default_text_fig(N, 'Модель: $w_0 + w_1x_1 + w_2x_2 = 0$')
 c.set_text_axis(f'Q = {Qe}\nw = {w}', coord_text=(0.02, 0.95), to_update=True, fontsize=15)
 
 c.draw_cls_points(data_x, data_y)
-c.draw_line_2D(data_x, to_update=True, ε=0.5, label=r'$y = -\frac{w_1}{w_2}x - \frac{w_0}{w_2} = a(x)$')
+c.draw_line_2D(to_update=True, axis_name=('$x=x_1$', '$y=x_2$'), label=r'$y = -\frac{w_1}{w_2}x - \frac{w_0}{w_2} = a(x)$')
 
+plt.pause(1)
 for i in range(N):
     k = np.random.randint(0, n_train-1)
     grad_loss_k = df(w, x_train[k], y_train[k])
