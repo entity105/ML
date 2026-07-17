@@ -35,13 +35,14 @@ np.random.seed(0) # генерация одинаковых последоват
 
 g = DynamicGraphs("Аппроксимация функции", figsize=(10, 6))
 g.set_default_text_fig(N, r"$model: a(x) = w_0 + w_1x + w_2x^2 + w_3x^3$")
-g.set_text_axis(f"Q = {Qe:.2f}", to_update=True)
+g.set_text_axis(f"Q = {Qe:.2f}", coord_text=(0.05, 0.95), to_update=True, fontsize=14)
 
 func_str = r"$f(x) = -0.7x - 0.2x^2 + 0.05x^3 - 0.2cos(3x) + 2$"
 g.draw_graph(coord_x, coord_y, label=func_str)
 
 model_str = f"$a(x) = {w[0]:.2f} {w[1]:+.2f}x {w[2]:+.2f}x^2 {w[3]:+.2f}x^3$"
 g.draw_graph(coord_x, model(w, sign_X), to_update=True, color='red', label=model_str)
+g.update_legend()
 
 plt.pause(1)
 for i in range(N):
@@ -60,8 +61,7 @@ for i in range(N):
     g.update_text(0, f'Итерация: {i + 1} / {N}')
     g.update_text(1, f"Q = {Qe:.2f}")
 
-    g.update_legend(0)
-    g.update_legend(0)
+    g.update_legend()
 
     plt.pause(0.05)
 

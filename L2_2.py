@@ -56,6 +56,8 @@ g.draw_graph(coord_x, coord_y, 1, label=func_str)
 model_str = f"$a(x) = {w_1[0]:.2f} + {w_1[1]:.2f}x + {w_1[2]:.2f}x^2 + {w_1[3]:.2f}x^3 + {w_1[4]:.2f}x^4$"
 g.draw_graph(coord_x, model(w_1, coord_x), 0, to_update=True, color='red', label=model_str)   # 0
 g.draw_graph(coord_x, model(w_1, coord_x), 1, to_update=True, color='red', label=model_str)   # 1
+g.update_legend(0, loc='upper right')
+g.update_legend(1, loc='upper right')
 
 plt.pause(1)
 for i in range(n_iter):
@@ -85,8 +87,8 @@ for i in range(n_iter):
     g.update_graphs(coord_x, new_y2, 1, new_label=updata_formula)
     g.update_text(2, f"Q = {Qe_2:.2f}")
 
-    g.update_legend(0, 'upper right')
-    g.update_legend(1, 'upper right')
+    g.update_legend(0, loc='upper right')
+    g.update_legend(1, loc='upper right')
 
     plt.pause(0.01)
 

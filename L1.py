@@ -32,12 +32,17 @@ lm_l1 = 0.05 # параметр лямбда для L1-регуляризато�
 Qe = np.average(loss(w, x_train.T, y_train))# начальное значение среднего эмпирического риска
 np.random.seed(0) # генерация одинаковых последовательностей псевдослучайных чисел
 
-c = ClassificationPlot("SDG: Бинарная классификация", figsize=(15, 7.5))
-c.set_default_text_fig(N, 'Модель: $w_0 + w_1x_1 + w_2x_2 = 0$')
+c = ClassificationPlot("SDG + L2: Бинарная классификация (Линейная зависимость признаков)", figsize=(15, 7.5))
+c.set_default_text_fig(N, r'Модель: $w_0 + w_1x_1 + w_2x_2 + 0.8w_3x_1 + \frac{1}{2}w_4(x_1 + x_2) = 0 '
+                          r'\Rightarrow w_0 + (w_1 + 0.8w_3 + \frac{1}{2}w_4)x_1 + (w_2  + \frac{1}{2}w_4)x_2 = 0$',
+                       x1_text=0.1, x2_text=0.2)
 c.set_text_axis(f'Q = {Qe}\nw = {w}', coord_text=(0.02, 0.95), to_update=True, fontsize=15)
 
-c.draw_cls_points(data_x, data_y, ε=3)
-c.draw_line_2D(to_update=True, axis_name=('$x=x_1$', '$y=x_2$'), label=r'$y = -\frac{w_1}{w_2}x - \frac{w_0}{w_2} = a(x)$')
+c.draw_cls_points(data_x, data_y, ε=2)
+c.draw_line_2D(to_update=True, axis_name=('$x=x_1$', '$y=x_2$'),
+               label=r'$y = -\frac{w_1 + 0.8w_3 + \frac{1}{2}w_4}{w_2  + \frac{1}{2}w_4}x - '
+                     r'\frac{w_0}{w_2  + \frac{1}{2}w_4} = a(x)$')
+c.update_legend(loc='upper right', fontsize=15)
 
 for i in range(N):
     k = np.random.randint(0, n_train - batch_size - 1)  # n_train - размер выборки (массива x_train)
@@ -54,9 +59,12 @@ for i in range(N):
     w = w - nt * (grad + l1)
     Qe = lm * Qk + (1-lm) * Qe
 
-    c.update_line_2D(w)
+    w_norm = np.array([-(w[1]+0.8*w[3]+0.5*w[4])/(w[2]+0.5*w[4]), -w[0]/(w[2]+0.5*w[4])])
+
+    c.update_line_2D(w_norm)
     c.update_text(0, f'Итерация: {i + 1} / {N}')
-    c.update_text(1, f'Q = {Qe:.3f}\nw = {w.round(2)}\n'rf'$w_n = [{-w[1]/w[2]:.2f}, {-w[0]/w[2]:.2f}]$')
+    c.update_text(1, f'Q = {Qe:.3f}\nw = {w.round(2)}\n'rf'$w_n = ['
+                     rf'{w_norm[0]:.2f}, {w_norm[1]:.2f}]$')
     plt.pause(0.005)
 
 Q = np.mean([np.dot(w, x) * y < 0 for x, y in zip(x_train, y_train)])

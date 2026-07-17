@@ -35,6 +35,7 @@ g.draw_graph(x, y, label=func_str)
 
 model_str = r"$a(x) = w_0 + w_1x + w_2x^2 + w_3x^3 + ... + w_{21}x^{21}$"
 g.draw_graph(x, model_res, color='red', label=model_str)
+g.update_legend()
 
 plt.show()
 

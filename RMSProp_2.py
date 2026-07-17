@@ -55,9 +55,10 @@ for i in range(N):
     w = w - nt * grad / (np.sqrt(G) + eps)
     Qe = lm * av_loss + (1 - lm) * Qe
 
-    c.update_line_2D(w)
+    w_norm = np.array([-w[1]/w[2], -w[0]/w[2]])
+    c.update_line_2D(w_norm)
     c.update_text(0, f'Итерация: {i + 1} / {N}')
-    c.update_text(1, f'Q = {Qe:.3f}\nw = {w.round(2)}\n'rf'$w_n = [{-w[1]/w[2]:.2f}, {-w[0]/w[2]:.2f}]$')
+    c.update_text(1, f'Q = {Qe:.3f}\nw = {w.round(2)}\n'rf'$w_n = [{w_norm[0]:.2f}, {w_norm[1]:.2f}]$')
     plt.pause(0.005)
 
 Q = np.average([int(np.dot(w, x) * y < 0) for x, y in zip(x_train, y_train)])

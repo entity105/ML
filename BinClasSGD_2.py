@@ -39,7 +39,9 @@ c.set_text_axis(f'Q = {Qe}\nw = {w}', coord_text=(0.02, 0.95), to_update=True, f
 
 c.draw_cls_points(data_x, data_y)
 c.draw_line_2D(to_update=True, axis_name=('$x=x_1$', '$y=x_2$'), label=r'$y = -\frac{w_1}{w_2}x - \frac{w_0}{w_2} = a(x)$')
+c.update_legend(loc='upper right', fontsize=15)
 
+plt.pause(1)
 for i in range(N):
     k = np.random.randint(0, n_train - batch_size - 1)
 
@@ -51,11 +53,12 @@ for i in range(N):
     # loss_av_k = np.average(loss(w, X_train.T, Y_train))
     Qe = lm * loss_av_k + (1 - lm) * Qe
     w = w - nt * grad
+    w_norm = np.array([-w[1] / w[2], -w[0] / w[2]])
 
     # Обновляем
-    c.update_line_2D(w)
+    c.update_line_2D(w_norm)
     c.update_text(0, f'Итерация: {i + 1} / {N}')
-    c.update_text(1, f'Q = {Qe:.3f}\nw = {w.round(2)}\n'rf'$w_n = [{-w[1]/w[2]:.2f}, {-w[0]/w[2]:.2f}]$')
+    c.update_text(1, f'Q = {Qe:.3f}\nw = {w.round(2)}\n'rf'$w_n = [{w_norm[0]:.2f}, {w_norm[1]:.2f}]$')
     plt.pause(0.005)
 
 Q = np.average([int(np.dot(w, x) * y < 0) for x, y in zip(x_train, y_train)])

@@ -87,8 +87,8 @@ for i in range(n_iter):
     g.update_graphs(coord_x, new_y2, 1, new_label=updata_formula)
     g.update_text(2, f"Q = {Qe_2:.3f}")
 
-    g.update_legend(0, 'lower right')
-    g.update_legend(1, 'lower right')
+    g.update_legend(0, loc='lower right')
+    g.update_legend(1, loc='lower right')
 
     plt.pause(0.05)
 

@@ -28,6 +28,7 @@ g.draw_graph(coord_x, y_train, label=func_str)
 
 model_str = r"$a(x) = w_0 + w_1x + w_2x^2 + w_3x^3$"
 g.draw_graph(coord_x, model_res, color='red', label=model_str)
+g.update_legend()
 
 plt.show()
 

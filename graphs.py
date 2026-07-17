@@ -15,11 +15,11 @@ class Init:
 
         self.texts = []
 
-    def set_default_text_fig(self, n:int, formula:str):
+    def set_default_text_fig(self, n:int, formula:str, x1_text=0.2, x2_text=0.4, y_text=0.9):
         """Добавляет стандартный текст в окно"""
-        y_place = 0.9
-        itr_str = self.fig.text(0.2, y_place, f'Итерация: 0 / {n}', ha='center', fontsize=14)
-        self.fig.text(0.4, y_place, formula, fontsize=14, fontweight='bold')
+        y_place = y_text
+        itr_str = self.fig.text(x1_text, y_place, f'Итерация: 0 / {n}', ha='center', fontsize=14)
+        self.fig.text(x2_text, y_place, formula, fontsize=14, fontweight='bold')
         self.fig.subplots_adjust(top=y_place - 0.02, bottom=0.1)
         self.texts.append(itr_str)
 
@@ -66,8 +66,12 @@ class Init:
         selected_axis.set_xlabel(axis_name[0])
         selected_axis.set_ylabel(axis_name[1])
         selected_axis.grid(True, alpha=0.3)
-        selected_axis.legend()
+        # selected_axis.legend(fontsize=legend_font)
         return graph_obj
+
+    def update_legend(self, ax_idx: int = 0, **kwargs):
+        ax = self.axes[ax_idx]
+        ax.legend(**kwargs)
 
     def _select_axis(self, ax_idx:int = 0):
         """Принимает индекс, возвращает ось"""
@@ -121,10 +125,6 @@ class DynamicGraphs(Init):
         if new_label:
             graph_obj.set_label(new_label)
 
-    def update_legend(self, ax_idx: int = 0, loc: str = 'lower right'):
-        ax = self.axes[ax_idx]
-        ax.legend(loc=loc)
-
 
 class ClassificationPlot(Init):
     def __init__(self, title:str, axis_place:tuple[int, int]=(), *args, **kwargs):
@@ -174,10 +174,12 @@ class ClassificationPlot(Init):
         if to_update:
             self.graphs.append(*graph_obj)
 
-    def update_line_2D(self, w:np.ndarray, idx:int=0):
+    def update_line_2D(self, w_norm:np.ndarray, idx:int=0):
+        if len(w_norm) != 2:
+            raise ValueError("Передать необходимо нормированные коэффициенты k, b для прямой y = kx + b")
+
         line_obj = self.graphs[idx]
         x = self.lim_x
 
-        w_norm = [w[1] / w[2], w[0] / w[2]]
-        updated_y = [-x_i * w_norm[0] - w_norm[1] for x_i in x]
+        updated_y = [x_i * w_norm[0] + w_norm[1] for x_i in x]
         line_obj.set_data(x, updated_y)
