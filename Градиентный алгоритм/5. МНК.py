@@ -15,6 +15,7 @@ coord_x = np.arange(-4.0, 6.0, 0.1)
 
 x_train = np.array([[_x**i for i in range(4)] for _x in coord_x]) # обучающая выборка - матрица (n x 4)
 y_train = func(coord_x) # целевые выходные значения
+
 w = np.linalg.inv(x_train.T @ x_train) @ x_train.T @ y_train
 model_res = model(w, coord_x)
 Q = np.average((model_res - y_train)**2)

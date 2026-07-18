@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import itertools as it
 import numpy as np
 
 class Init:
@@ -144,7 +145,7 @@ class ClassificationPlot(Init):
         y_max = max(coords, key=lambda t: t[1])[1] + ε
         ax.set_ylim(y_min, y_max)
 
-    def draw_cls_points(self, coords, classes, ax_idx: int = 0, ε:float=0.5):
+    def draw_cls_points(self, coords, classes, settings:tuple=(), ax_idx: int = 0, ε:float=0.5, **kwargs):
         self.__set_lims_ax(coords, ax_idx, ε)
         classes = np.array(classes)
         coords = np.array(coords)
@@ -154,13 +155,16 @@ class ClassificationPlot(Init):
             'brown', 'pink', 'gray', 'cyan', 'magenta',
             'olive', 'teal', 'navy', 'coral', 'lime'
         )
-        classes_set = tuple(set(classes))
+        classes_set = sorted(tuple(set(classes)))
         if len(classes_set) > len(colors):
             raise ValueError("Слишком много классов")
 
-        for cls, color in zip(classes_set, colors):
+        for cls, color, setting in it.zip_longest(classes_set, colors, settings, fillvalue={}):
+            if cls == {}:
+                break
             x = coords[classes == cls]
-            ax.scatter(x[:, 0], x[:, 1], color=color)
+            ax.scatter(x[:, 0], x[:, 1], color=color, **setting, **kwargs)
+        ax.grid(True, alpha=0.3)
 
     def draw_line_2D(self, coords:list[tuple, tuple]=None, ax_idx:int = 0, to_update=False, **custom_settings):
         if coords:

@@ -47,10 +47,11 @@ for i in range(N):
     w = w - nt * grad_loss_k
     Qe = lm * loss_k + (1 - lm) * Qe
 
+    w_n = np.array([-w[1]/w[2], -w[0]/w[2]])
     # Обновляем
-    c.update_line_2D(w)
+    c.update_line_2D(w_n)
     c.update_text(0, f'Итерация: {i + 1} / {N}')
-    c.update_text(1, f'Q = {Qe:.3f}\nw = {w.round(2)}\n'rf'$w_n = [{-w[1]/w[2]:.2f}, {-w[0]/w[2]:.2f}]$')
+    c.update_text(1, f'Q = {Qe:.3f}\nw = {w.round(2)}\n'rf'$w_n = [{w_n[0]:.2f}, {w_n[1]:.2f}]$')
     plt.pause(0.005)
 
 Q = np.average([int(np.dot(w, x) * y < 0) for x, y in zip(x_train, y_train)])

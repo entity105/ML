@@ -1,4 +1,6 @@
 import numpy as np
+from graphs import ClassificationPlot
+from matplotlib import pyplot as plt
 
 np.random.seed(0)
 
@@ -52,3 +54,22 @@ def decision(data: np.array):
 predict = list(decision(x_train))
 Q = sum(int(a != y) for a, y in zip(predict, y_train))
 # print(Q)
+
+c = ClassificationPlot("Наивная байесовская классификация", figsize=(10, 6))
+settings = ({"label":"Класс 1 (y = 1)", "s":60},
+            {"label":"Класс 2 (y = -1)", "s":60},
+            {"label":"Ошибка", "marker":"x", "s":100, "linewidths":2})
+mistakes = [2 if x != y else x for x, y in zip(predict, y_train)]
+
+c.draw_cls_points(x_train, mistakes, settings)
+# c.set_text_axis(f"$M[y=1] = ({mx11:.2f}, {mx12:.2f})$\n"
+#                 f"$M[y=-1] = ({mx21:.2f}, {mx22:.2f})$\n\n"
+#                 f"$D[y=1] = ({Dx11:.2f}, {Dx12:.2f})$\n"
+#                 f"$D[y=-1] = ({Dx21:.2f}, {Dx22:.2f})$", coord_text=(0.02, 0.96))
+
+c.set_text_axis(f"Кол-во ошибок: {mistakes.count(2)}\n"
+                f"Q = {Q}", coord_text=(0.02, 0.7))
+
+
+c.update_legend()
+plt.show()

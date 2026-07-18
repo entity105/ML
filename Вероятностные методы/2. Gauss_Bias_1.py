@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from graphs import ClassificationPlot
 
 np.random.seed(0)
 
@@ -59,7 +60,19 @@ Q = sum(int(a != y) for a, y in zip(predict, y_train))
 
 print(Q)
 
-# График
-# print(x_train.T[0].shape, y_train.shape)
-# plt.scatter(x_train.T[0], y_train)
-# plt.show()
+c = ClassificationPlot("Гауссовская байесовская классификация", figsize=(10, 6))
+settings = ({"label":"Класс 1 (y = 1)"},
+            {"label":"Класс 2 (y = -1)"},
+            {"label":"Ошибка", "marker":"x", "s":100, "linewidths":2})
+mistakes = [2 if x != y else x for x, y in zip(predict, y_train)]
+
+c.draw_cls_points(x_train, mistakes, settings)
+c.set_text_axis(f"$M[y=1] = ({mm1[0]:.2f}, {mm1[1]:.2f})$\n"
+                f"$M[y=-1] = ({mm2[0]:.2f}, {mm2[1]:.2f})$", coord_text=(0.02, 0.96))
+
+c.set_text_axis(f"Кол-во ошибок: {mistakes.count(2)}\n"
+                f"Q = {Q}", coord_text=(0.02, 0.7))
+
+
+c.update_legend()
+plt.show()

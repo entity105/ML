@@ -45,7 +45,7 @@ g.set_text_axis(f"Q = {Qe:.2f}", to_update=True)
 func_str = r"$f(x) = 0.5x + 0.2x^2 - 0.05x^3 + 0.2sin(4x) - 2.5$"
 g.draw_graph(coord_x, coord_y, label=func_str)
 
-model_str = f"$a(x) = {w[0]:.2f} + {w[1]:.2f}x + {w[2]:.2f}x^2 + {w[3]:.2f}x^3$"
+model_str = f"$a(x) = {w[0]:.2f} {w[1]:+.2f}x {w[2]:+.2f}x^2 {w[3]:+.2f}x^3$"
 g.draw_graph(coord_x, model(w, coord_x), to_update=True, color='red', label=model_str)
 g.update_legend(loc='upper right')
 

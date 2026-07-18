@@ -20,8 +20,8 @@ coord_y = func(coord_x)
 
 # График
 w = MovePoint('Градиентный спуск')
-w.drow_graph(coord_x, coord_y)
-w.set_text_axis(f'Итерация i = 0 / {N}, координата: ({x:.4f}, {func(x):.4f})', to_updata=True)
+w.draw_graph(coord_x, coord_y)
+w.set_text_axis(f'Итерация i = 0 / {N}, координата: ({x:.4f}, {func(x):.4f})', to_update=True)
 w.make_point(x, func(x), to_update=True)
 
 plt.pause(1)
