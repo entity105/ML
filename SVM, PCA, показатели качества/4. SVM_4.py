@@ -1,4 +1,6 @@
+import matplotlib.pyplot as plt
 import numpy as np
+from graphs import ClassificationPlot
 from sklearn import svm
 from sklearn.model_selection import train_test_split
 
@@ -51,3 +53,8 @@ w3 = np.concatenate([[w03], w3])
 predict = clf.predict(x_test)
 Q = np.sum(predict != y_test)
 print(Q)
+
+c_plt = ClassificationPlot("SVC")
+c_plt.draw_cls_points(data_x, (0, 1, 2))
+
+plt.show()

@@ -67,7 +67,7 @@ class Init:
         selected_axis.set_xlabel(axis_name[0])
         selected_axis.set_ylabel(axis_name[1])
         selected_axis.grid(True, alpha=0.3)
-        # selected_axis.legend(fontsize=legend_font)
+        selected_axis.legend()
         return graph_obj
 
     def update_legend(self, ax_idx: int = 0, **kwargs):
@@ -85,6 +85,7 @@ class Init:
 
 class MovePoint(Init):
     def __init__(self, title:str, axis_place:tuple[int, int]=(), *args, **kwargs):
+        """Создаёт окно с заголовком и оси. *args, **kwargs - остальные аргументы plt.subplots()"""
         super().__init__(title, axis_place, *args, **kwargs)
 
         self.points = []
@@ -110,17 +111,21 @@ class MovePoint(Init):
 
 
 class DynamicGraphs(Init):
+    """Позволяет создавать графики, которые могут меняться в runtime"""
     def __init__(self, title:str, axis_place:tuple[int, int]=(), *args, **kwargs):
+        """Создаёт окно с заголовком и оси. *args, **kwargs - остальные аргументы plt.subplots()"""
         super().__init__(title, axis_place, *args, **kwargs)
         
-        self.graphs = []
+        self.graphs = []        # Хранит графики для дальнейшей (возможной) перерисовки
 
     def draw_graph(self, x_data, y_data, ax_idx: int = 0, to_update=False, axis_name=('x', 'y'), **custom_settings):
+        # Делает график на оси по индексу ax_idx(=0)
         graph = super().draw_graph(x_data, y_data, ax_idx, axis_name, **custom_settings)
         if to_update:
             self.graphs.append(*graph)
 
     def update_graphs(self, x_data, y_data, idx:int=0, new_label=None):
+        """Обновление графика"""
         graph_obj = self.graphs[idx]
         graph_obj.set_data(x_data, y_data)
         if new_label:
@@ -129,13 +134,15 @@ class DynamicGraphs(Init):
 
 class ClassificationPlot(Init):
     def __init__(self, title:str, axis_place:tuple[int, int]=(), *args, **kwargs):
+        """Создаёт окно с заголовком и оси. *args, **kwargs - остальные аргументы plt.subplots()"""
         super().__init__(title, axis_place, *args, **kwargs)
 
         self.graphs = []
         self.lim_x = None
 
     def __set_lims_ax(self, coords, ax_idx: int = 0, ε:float=0.5):
-        x_min = min(coords, key=lambda t: t[0])[0] - ε
+        """Установка границ графика"""
+        x_min = min(coords, key=lambda t: t[0])[0] - ε  # ε - отступ
         x_max = max(coords, key=lambda t: t[0])[0] + ε
         self.lim_x = x_min, x_max
         ax = self._select_axis(ax_idx)
@@ -146,6 +153,7 @@ class ClassificationPlot(Init):
         ax.set_ylim(y_min, y_max)
 
     def draw_cls_points(self, coords, classes, settings:tuple=(), ax_idx: int = 0, ε:float=0.5, **kwargs):
+        """Рисует точки классов. Для каждого класса - уникальный цвет"""
         self.__set_lims_ax(coords, ax_idx, ε)
         classes = np.array(classes)
         coords = np.array(coords)
@@ -159,18 +167,21 @@ class ClassificationPlot(Init):
         if len(classes_set) > len(colors):
             raise ValueError("Слишком много классов")
 
+        # Для каждого класса рисуем точки
+        # в settings - упорядоченные настройки для каждого класса
         for cls, color, setting in it.zip_longest(classes_set, colors, settings, fillvalue={}):
-            if cls == {}:
+            if cls == {}:   # Если классы кончились - завершить отрисовку
                 break
-            x = coords[classes == cls]
+            x = coords[classes == cls]   # Выбираем только точки класса cls
             ax.scatter(x[:, 0], x[:, 1], color=color, **setting, **kwargs)
         ax.grid(True, alpha=0.3)
 
     def draw_line_2D(self, coords:list[tuple, tuple]=None, ax_idx:int = 0, to_update=False, **custom_settings):
+        """Рисует прямую, прохоящую через заданные координаты"""
         if coords:
             x = coords[0][0], coords[1][0]
             y = coords[0][1], coords[1][1]
-        else:
+        else:       # Если координаты не заданы, рисуем обычную горизонтальную линию
             x = self.lim_x
             y = (0, 0)
 
@@ -179,6 +190,7 @@ class ClassificationPlot(Init):
             self.graphs.append(*graph_obj)
 
     def update_line_2D(self, w_norm:np.ndarray, idx:int=0):
+        """Изменяет прямую по нормированным коэффициентам (k, b)"""
         if len(w_norm) != 2:
             raise ValueError("Передать необходимо нормированные коэффициенты k, b для прямой y = kx + b")
 

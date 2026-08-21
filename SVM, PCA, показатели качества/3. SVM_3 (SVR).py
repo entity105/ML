@@ -2,7 +2,7 @@ import numpy as np
 from sklearn import svm
 
 def func(x):
-    return np.sin(0.5*x) + 0.2 * np.cos(2*x) - 0.1 * np.sin(4 * x) - 2.5
+    return np.sin(0.5*x) + 0.9 * np.cos(2*x) - 0.1 * np.sin(4 * x) - 2.5
 
 
 def model(w, x):
