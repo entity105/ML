@@ -48,6 +48,7 @@ g.update_legend()
 plt.pause(1)
 for i in range(N):
     w = w - eta * dQ(w, coord_x, coord_y)
+
     y = model(w, coord_x)
     Q_i = Q(y, coord_y)
 

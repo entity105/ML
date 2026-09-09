@@ -10,12 +10,12 @@ def func(x):
 def df(x):
     return 2 * x
 
-N = 50
-x = 4.5
+N = 100
+x = 45
 lmd = 0.9
 
 
-coord_x = np.arange(-5, 5, 0.1)
+coord_x = np.arange(-5, 50, 0.1)
 coord_y = func(coord_x)
 
 # График
@@ -28,7 +28,7 @@ plt.pause(1)
 for i in range(N):
 
     lmd = 1/min(i+1, 100)
-    x = x - lmd * np.sign(df(x))
+    x = x - np.sign(df(x))
 
     y = func(x)
     w.update_point(x, y, 0)
